@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        .container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .container input[type="file"] {
+            margin-bottom: 20px;
+        }
+        .container button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Convert Image to PDF</h2>
+        <input type="file" id="imageInput" accept="image/*" multiple>
+        <button id="convertBtn">Convert to PDF</button>
+    </div>
+    <script>
+        document.getElementById('convertBtn').addEventListener('click', function () {
+            const files = document.getElementById('imageInput').files;
+            if (files.length === 0) {
+                alert('Please select at least one image.');
+                return;
+            }
+            // Add logic to convert images to PDF here
+            console.log('Converting images to PDF:', files);
+            alert('PDF conversion logic will be implemented here.');
+        });
+    </script>
+</body>
+</html>
