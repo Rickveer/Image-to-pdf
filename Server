@@ -1,0 +1,33 @@
+const express = require('express');
+   const multer = require('multer');
+   const { PDFDocument } = require('pdf-lib');
+   const fs = require('fs');
+   const path = require('path');
+
+   const app = express();
+   const upload = multer({ dest: 'uploads/' });
+
+   app.use(express.static('public'));
+
+   app.post('/convert', upload.array('images'), async (req, res) => {
+       const pdfDoc = await PDFDocument.create();
+       for (const file of req.files) {
+           const imageBytes = fs.readFileSync(file.path);
+           const image = await pdfDoc.embedJpg(imageBytes); // Use embedPng for PNG images
+           const page = pdfDoc.addPage();
+           page.drawImage(image, {
+               x: 50,
+               y: 50,
+               width: page.getWidth() - 100,
+               height: page.getHeight() - 100,
+           });
+           fs.unlinkSync(file.path); // Delete the uploaded file
+       }
+       const pdfBytes = await pdfDoc.save();
+       res.setHeader('Content-Type', 'application/pdf');
+       res.send(pdfBytes);
+   });
+
+   app.listen(3000, () => {
+       console.log('Server running on http://localhost:3000');
+   });
