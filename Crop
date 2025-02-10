@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Image</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .container h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #6a11cb;
+            font-weight: 600;
+        }
+
+        /* Image Cropper Container */
+        .cropper-container {
+            margin: 20px auto;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        /* Buttons */
+        .container button {
+            margin: 10px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .container button:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+
+        /* Footer Links */
+        .footer-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .footer-links a {
+            color: #6a11cb;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #2575fc;
+        }
+    </style>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Crop Image</h2>
+        <div class="cropper-container">
+            <img id="imageToCrop" src="" alt="Image to Crop" style="max-width: 100%;">
+        </div>
+        <button id="cropBtn">Crop Image</button>
+        <button id="convertBtn">Convert to PDF</button>
+        <div class="footer-links">
+            <a href="main.html">Back to Main</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </div>
+
+    <!-- Cropper.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        // Initialize Cropper.js
+        const image = document.getElementById('imageToCrop');
+        let cropper;
+
+        // Load the uploaded image
+        const uploadedImage = localStorage.getItem('uploadedImage');
+        if (uploadedImage) {
+            image.src = uploadedImage;
+            cropper = new Cropper(image, {
+                aspectRatio: NaN, // Free aspect ratio
+                viewMode: 1,
+                autoCropArea: 0.8,
+                responsive: true,
+                restore: true,
+            });
+        } else {
+            alert('No image found. Please upload an image first.');
+            window.location.href = 'main.html'; // Redirect to main page
+        }
+
+        // Crop Button Logic
+        document.getElementById('cropBtn').addEventListener('click', function () {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            if (croppedCanvas) {
+                // Display the cropped image
+                image.src = croppedCanvas.toDataURL();
+                cropper.destroy(); // Destroy the old cropper instance
+                cropper = new Cropper(image, {
+                    aspectRatio: NaN,
+                    viewMode: 1,
+                    autoCropArea: 0.8,
+                    responsive: true,
+                    restore: true,
+                });
+                alert('Image cropped successfully!');
+            }
+        });
+
+        // Convert to PDF Button Logic
+        document.getElementById('convertBtn').addEventListener('click', function () {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            if (croppedCanvas) {
+                // Convert the cropped image to PDF
+                const imageData = croppedCanvas.toDataURL('image/jpeg', 1.0);
+                const pdf = new jsPDF();
+                pdf.addImage(imageData, 'JPEG', 10, 10, 190, 0); // Add image to PDF
+                pdf.save('cropped-image.pdf'); // Download the PDF
+                alert('PDF created successfully!');
+            } else {
+                alert('Please crop the image first.');
+            }
+        });
+    </script>
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        window.jsPDF = window.jspdf.jsPDF; // Initialize jsPDF
+    </script>
+</body>
+</html>
